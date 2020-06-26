@@ -72,33 +72,31 @@ class AddNotesActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun dBAddNotes() {
+    private fun dBAddNotes() = try {
+        realm.beginTransaction()
+        val idNumber:Number? = realm.where(Notes::class.java).max("id")
+        val id = if(idNumber == null)  1 else idNumber.toInt() + 1
 
-        try {
-            realm.beginTransaction()
-            val idNumber:Number? = realm.where(Notes::class.java).max("id")
-            val id = if(idNumber == null)  1 else idNumber.toInt() + 1
+        val notes = Notes()
+        val note = getNote()
+        notes.id = (note?.id ?: id)
+        notes.title = title.text.toString()
+        notes.description = desctription.text.toString()
+        notes.alert = alert.text.toString()
+        notes.frequency = frequency.selectedItemPosition
 
-            val notes = Notes()
-            notes.id = (getNote()?.id ?: id)
-            notes.title = title.text.toString()
-            notes.description = desctription.text.toString()
-            notes.alert = alert.text.toString()
-            notes.frequency = frequency.selectedItemPosition
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+        notes.createAt = formatter.format(LocalDateTime.now()).toString()
+        realm.copyToRealmOrUpdate(notes)
+        realm.commitTransaction()
 
-            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-            notes.createAt = formatter.format(LocalDateTime.now()).toString()
-            realm.copyToRealmOrUpdate(notes)
-            realm.commitTransaction()
+        Toast.makeText(this,  if (note == null) "Nota adicionada com sucesso" else "Nota editada com sucesso", Toast.LENGTH_SHORT).show()
 
-            Toast.makeText(this, "Nota adicionada com sucesso", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
 
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-
-        }catch (e:Exception){
-            Toast.makeText(this, "Erro ao adicionar nota $e", Toast.LENGTH_SHORT).show()
-        }
+    }catch (e:Exception){
+        Toast.makeText(this, "Acontenceu um erro! $e", Toast.LENGTH_SHORT).show()
     }
 
     private fun getNote(): Notes? {
