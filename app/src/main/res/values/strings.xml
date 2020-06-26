@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Note App</string>
+
+    <string-array name="frequency_list">
+        <item>Somente uma vez</item>
+        <item>Semanalmente</item>
+        <item>Mensalmente</item>
+        <item>Todos os dias</item>
+    </string-array>
+</resources>
