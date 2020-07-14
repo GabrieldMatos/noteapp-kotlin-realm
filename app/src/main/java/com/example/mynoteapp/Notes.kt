@@ -11,6 +11,7 @@ open class Notes (
     var description:String?=null,
     var createAt:String?=null,
     var frequency:Int?=null,
-    var alert:String?=null
+    var alert:String?=null,
+    var date:String?=null
 
 ) : RealmObject()
